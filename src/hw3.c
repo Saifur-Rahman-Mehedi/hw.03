@@ -8,13 +8,6 @@
 
 #define DEBUG(...) fprintf(stderr, "[          ] [ DEBUG ] "); fprintf(stderr, __VA_ARGS__); fprintf(stderr, " -- %s()\n", __func__)
 
-#define MAX_SIZE 8
-
-typedef struct {
-    char board[MAX_SIZE][MAX_SIZE]; 
-    int height[MAX_SIZE][MAX_SIZE];  
-} GameState;
-
 GameState* initialize_game_state(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
