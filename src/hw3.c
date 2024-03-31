@@ -103,9 +103,9 @@ GameState* place_tiles(GameState *game, int row, int col, char direction, const 
         int currentRow = direction == 'V' ? row + i : row;
         int currentCol = direction == 'H' ? col + i : col;
 
-        if (currentRow >= MAX_SIZE || currentCol >= MAX_SIZE) {
-            resizeBoardIfNeeded(&game, currentRow + 1, currentCol + 1);
-        }
+    if (currentRow >= MAX_SIZE || currentCol >= MAX_SIZE) {
+        resizeBoardIfNeeded(game, currentRow + 1, currentCol + 1);
+    }
 
         if (tiles[i] != ' ') { 
             game->board[currentRow][currentCol] = tiles[i];
@@ -117,15 +117,7 @@ GameState* place_tiles(GameState *game, int row, int col, char direction, const 
     return game;
 }
 
-GameState* place_tiles(GameState *game, int row, int col, char direction, const char *tiles, int *num_tiles_placed) {
-    (void)game;
-    (void)row;
-    (void)col;
-    (void)direction;
-    (void)tiles;
-    (void)num_tiles_placed;
-    return NULL;
-}
+
 
 GameState* undo_place_tiles(GameState *game) {
     (void)game;
