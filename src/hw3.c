@@ -9,8 +9,40 @@
 #define DEBUG(...) fprintf(stderr, "[          ] [ DEBUG ] "); fprintf(stderr, __VA_ARGS__); fprintf(stderr, " -- %s()\n", __func__)
 
 GameState* initialize_game_state(const char *filename) {
-    (void)filename;
-    return NULL;
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("Error opening file");
+        return NULL;
+    }
+
+    GameState *gameState = malloc(sizeof(GameState));
+    if (!gameState) {
+        perror("Failed to allocate memory for GameState");
+        fclose(file);
+        return NULL;
+    }
+
+    for (int i = 0; i < MAX_SIZE; i++) {
+        for (int j = 0; j < MAX_SIZE; j++) {
+            gameState->board[i][j] = '.';
+            gameState->height[i][j] = 0; 
+        }
+    }
+
+    char line[MAX_SIZE + 2]; 
+    int row = 0;
+    while (fgets(line, sizeof(line), file) && row < MAX_SIZE) {
+        for (int col = 0; col < MAX_SIZE; col++) {
+            if (line[col] == '.' || (line[col] >= 'A' && line[col] <= 'Z')) {
+                gameState->board[row][col] = line[col];
+                gameState->height[row][col] = (line[col] != '.') ? 1 : 0;
+            }
+        }
+        row++;
+    }
+
+    fclose(file);
+    return gameState;
 }
 
 GameState* place_tiles(GameState *game, int row, int col, char direction, const char *tiles, int *num_tiles_placed) {
