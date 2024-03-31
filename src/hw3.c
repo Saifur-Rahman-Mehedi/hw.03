@@ -8,6 +8,104 @@
 
 #define DEBUG(...) fprintf(stderr, "[          ] [ DEBUG ] "); fprintf(stderr, __VA_ARGS__); fprintf(stderr, " -- %s()\n", __func__)
 
+bool isConnected(GameState *game, int row, int col, char direction, const char *tiles) {
+    bool isEmpty = true;
+    for (int i = 0; i < game->numRows && isEmpty; ++i) {
+        for (int j = 0; j < game->numCols && isEmpty; ++j) {
+            if (game->board[i][j] != '.') {
+                isEmpty = false;
+            }
+        }
+    }
+    if (isEmpty) {
+        return true; d
+    }
+
+    bool hasAdjacentTile = false;
+    int length = strlen(tiles);
+
+    for (int i = 0; i < length; ++i) {
+        int currentRow = direction == 'V' ? row + i : row;
+        int currentCol = direction == 'H' ? col + i : col;
+
+        if (currentRow > 0 && game->board[currentRow - 1][currentCol] != '.') {
+            hasAdjacentTile = true;
+        }
+        if (currentRow < game->numRows - 1 && game->board[currentRow + 1][currentCol] != '.') {
+            hasAdjacentTile = true;
+        }
+        if (currentCol > 0 && game->board[currentRow][currentCol - 1] != '.') {
+            hasAdjacentTile = true;
+        }
+        if (currentCol < game->numCols - 1 && game->board[currentRow][currentCol + 1] != '.') {
+            hasAdjacentTile = true;
+        }
+
+        if (tiles[i] != ' ' && game->board[currentRow][currentCol] != '.') {
+            hasAdjacentTile = true;
+        }
+    }
+
+    int firstTileRow = direction == 'V' ? row : row;
+    int firstTileCol = direction == 'H' ? col : col;
+    if (game->board[firstTileRow][firstTileCol] != '.' || hasAdjacentTile) {
+        return true;
+    }
+
+    return hasAdjacentTile;
+}
+
+
+GameState* initialize_game_state(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("File opening failed");
+        return NULL;
+    }
+
+    GameState* game = malloc(sizeof(GameState));
+    assert(game != NULL); 
+
+    initializeBoard(game, MAX_SIZE, MAX_SIZE); 
+
+    char line[256]; 
+    int row = 0;
+    while (fgets(line, sizeof(line), file)) {
+        for (int col = 0; col < strlen(line) && line[col] != '\n'; ++col) {
+            if (line[col] != '.') {
+                game->board[row][col] = line[col];
+                game->height[row][col] = 1; 
+            }
+        }
+        row++;
+    }
+
+    fclose(file);
+    return game;
+}
+
+bool isWordInDictionary(const char* word) {
+    FILE *file = fopen("words.txt", "r");
+    if (!file) {
+        perror("File opening failed");
+        return false;
+    }
+
+    char buffer[256]; 
+    while (fgets(buffer, sizeof(buffer), file)) {
+        buffer[strcspn(buffer, "\n")] = 0;
+
+        if (strcasecmp(buffer, word) == 0) { 
+            fclose(file);
+            return true;
+        }
+    }
+
+    fclose(file);
+    return false;
+}
+
+
 bool isWordInDictionary(const char* word);
 bool isConnected(GameState *game, int row, int col, char direction, const char *tiles);
 
